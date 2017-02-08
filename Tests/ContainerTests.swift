@@ -132,12 +132,6 @@ class ContainerTests: QuickSpec {
                     playback.trigger(PlaybackEvent.BufferFull.rawValue)
                     expect(eventWasTriggered) == true
                 }
-
-                it("Should trigger State Changed event after playback respective event is triggered") {
-                    container.on(ContainerEvent.PlaybackStateChanged.rawValue, callback: eventCallback)
-                    playback.trigger(PlaybackEvent.StateChanged.rawValue)
-                    expect(eventWasTriggered) == true
-                }
                 
                 it("Should trigger Media Control Disabled event after playback respective event is triggered") {
                     container.on(ContainerEvent.MediaControlDisabled.rawValue, callback: eventCallback)
