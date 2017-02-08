@@ -168,7 +168,7 @@ class MediaControlTests: QuickSpec {
                     
                     it ("Should listen to current time updates") {
                         let info: EventUserInfo = ["position" : 78]
-                        playback.trigger(PlaybackEvent.TimeUpdated.rawValue, userInfo: info)
+                        playback.trigger(.positionUpdate, userInfo: info)
                         
                         expect(mediaControl.currentTimeLabel!.text) == "01:18"
                     }
@@ -180,7 +180,7 @@ class MediaControlTests: QuickSpec {
                     }
                     
                     it ("Should listen to Ready event ") {
-                        playback.trigger(PlaybackEvent.Ready.rawValue)
+                        playback.trigger(.ready)
                         
                         expect(mediaControl.durationLabel!.text) == "00:30"
                     }

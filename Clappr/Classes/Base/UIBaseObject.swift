@@ -54,3 +54,13 @@ public class UIBaseObject: UIView, EventProtocol {
     
     public func render() {}
 }
+
+extension UIBaseObject {
+    public func trigger(event: Event) {
+        trigger(event.rawValue)
+    }
+
+    public func trigger(event: Event, userInfo: EventUserInfo) {
+        trigger(event.rawValue, userInfo: userInfo)
+    }
+}

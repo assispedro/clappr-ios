@@ -4,7 +4,8 @@ public class Container: UIBaseObject {
     public internal(set) var ready = false
     public internal(set) var plugins: [UIContainerPlugin] = []
     public internal(set) var options: Options
-    
+
+    private var buffering = false
     private var loader: Loader
     
     public var isPlaying: Bool {
@@ -106,25 +107,34 @@ public class Container: UIBaseObject {
         }
     }
     
-    private func eventBindings() -> [PlaybackEvent : EventCallback] {
+    private func eventBindings() -> [Event : EventCallback] {
         return [
-            .Buffering              : { [weak self] (info: EventUserInfo) in self?.trigger(.Buffering)},
-            .BufferFull             : { [weak self] (info: EventUserInfo) in self?.trigger(.BufferFull)},
-            .Ended                  : { [weak self] (info: EventUserInfo) in self?.trigger(.Ended)},
-            .Play                   : { [weak self] (info: EventUserInfo) in self?.onPlay()},
-            .Pause                  : { [weak self] (info: EventUserInfo) in self?.trigger(.Pause)},
-            .MediaControlDisabled   : { [weak self] (info: EventUserInfo) in self?.mediaControlEnabled = false },
-            .MediaControlEnabled    : { [weak self] (info: EventUserInfo) in self?.mediaControlEnabled = true },
-            .Ready                  : { [weak self] (info: EventUserInfo) in self?.setReady() },
-            .Progress               : { [weak self] (info: EventUserInfo) in self?.forward(.Progress, userInfo:info)},
-            .TimeUpdated            : { [weak self] (info: EventUserInfo) in self?.forward(.TimeUpdated, userInfo:info)},
-            .SubtitleSourcesUpdated : { [weak self] (info: EventUserInfo) in self?.forward(.SubtitleSourcesUpdated, userInfo:info)},
-            .AudioSourcesUpdated    : { [weak self] (info: EventUserInfo) in self?.forward(.AudioSourcesUpdated, userInfo:info)},
-            .Error                  : { [weak self] (info: EventUserInfo) in self?.forward(.Error, userInfo:info)},
+            .stalled              : { [weak self] (info: EventUserInfo) in self?.onStall()},
+            .didComplete          : { [weak self] (info: EventUserInfo) in self?.trigger(.Ended)},
+            .playing              : { [weak self] (info: EventUserInfo) in self?.onPlay()},
+            .didPause             : { [weak self] (info: EventUserInfo) in self?.trigger(.Pause)},
+            .disableMediaControl  : { [weak self] (info: EventUserInfo) in self?.mediaControlEnabled = false },
+            .enableMediaControl   : { [weak self] (info: EventUserInfo) in self?.mediaControlEnabled = true },
+            .ready                : { [weak self] (info: EventUserInfo) in self?.setReady() },
+            .bufferUpdate         : { [weak self] (info: EventUserInfo) in self?.forward(.Progress, userInfo:info)},
+            .positionUpdate       : { [weak self] (info: EventUserInfo) in self?.forward(.TimeUpdated, userInfo:info)},
+            .didUpdateSubtitleSource : { [weak self] (info: EventUserInfo) in self?.forward(.SubtitleSourcesUpdated, userInfo:info)},
+            .didUpdateAudioSource : { [weak self] (info: EventUserInfo) in self?.forward(.AudioSourcesUpdated, userInfo:info)},
+            .error                : { [weak self] (info: EventUserInfo) in self?.forward(.Error, userInfo:info)},
         ]
     }
 
+    private func onStall() {
+        trigger(.Buffering)
+        buffering = true
+    }
+
     private func onPlay() {
+        if buffering {
+            buffering = false
+            trigger(.BufferFull)
+        }
+
         options[kStartAt] = 0
         trigger(.Play)
     }

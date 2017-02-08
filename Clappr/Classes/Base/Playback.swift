@@ -94,7 +94,7 @@ public class Playback: UIBaseObject, Plugin {
     }
 
     public override func render() {
-        once(PlaybackEvent.Ready.rawValue) {[unowned self] _ in
+        once(Event.ready.rawValue) {[unowned self] _ in
             if self.startAt != 0 {
                 self.seek(self.startAt)
             }
@@ -117,14 +117,6 @@ public class Playback: UIBaseObject, Plugin {
             let defaultAudioSource = audioSources?.filter({$0.language == defaultAudioLanguage}).first {
             selectedAudioSource = defaultAudioSource
         }
-    }
-
-    internal func trigger(event: PlaybackEvent) {
-        trigger(event.rawValue)
-    }
-
-    internal func trigger(event: PlaybackEvent, userInfo: EventUserInfo) {
-        trigger(event.rawValue, userInfo: userInfo)
     }
 
     public func play() {}
