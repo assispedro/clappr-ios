@@ -110,7 +110,6 @@ public class Container: UIBaseObject {
         return [
             .Buffering              : { [weak self] (info: EventUserInfo) in self?.trigger(.Buffering)},
             .BufferFull             : { [weak self] (info: EventUserInfo) in self?.trigger(.BufferFull)},
-            .HighDefinitionUpdated  : { [weak self] (info: EventUserInfo) in self?.trigger(.HighDefinitionUpdated)},
             .StateChanged           : { [weak self] (info: EventUserInfo) in self?.trigger(.PlaybackStateChanged)},
             .Ended                  : { [weak self] (info: EventUserInfo) in self?.trigger(.Ended)},
             .Play                   : { [weak self] (info: EventUserInfo) in self?.onPlay()},

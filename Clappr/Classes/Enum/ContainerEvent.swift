@@ -17,7 +17,6 @@ public enum ContainerEvent: String {
     case Volume = "clappr:container:volume"
     case Buffering = "clappr:container:buffering"
     case BufferFull = "clappr:container:buffer_full"
-    case HighDefinitionUpdated = "clappr:container:hd_updated"
     case MediaControlDisabled = "clappr:container:media_control_disabled"
     case MediaControlEnabled = "clappr:container:media_control_enabled"
     case AudioSourcesUpdated = "clappr:container:audio_sources_updated"
