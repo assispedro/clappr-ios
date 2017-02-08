@@ -2,7 +2,6 @@ import Foundation
 
 public class Container: UIBaseObject {
     public internal(set) var ready = false
-    public internal(set) var dvrInUse = false
     public internal(set) var settings: [String : AnyObject] = [:]
     public internal(set) var plugins: [UIContainerPlugin] = []
     public internal(set) var options: Options
@@ -121,7 +120,6 @@ public class Container: UIBaseObject {
             .MediaControlEnabled    : { [weak self] (info: EventUserInfo) in self?.mediaControlEnabled = true },
             .SettingsUpdated        : { [weak self] (info: EventUserInfo) in self?.settingsUpdated()},
             .Ready                  : { [weak self] (info: EventUserInfo) in self?.setReady() },
-            .DVRStateChanged        : { [weak self] (info: EventUserInfo) in self?.setDvrInUse(info) },
             .Progress               : { [weak self] (info: EventUserInfo) in self?.forward(.Progress, userInfo:info)},
             .TimeUpdated            : { [weak self] (info: EventUserInfo) in self?.forward(.TimeUpdated, userInfo:info)},
             .LoadedMetadata         : { [weak self] (info: EventUserInfo) in self?.forward(.LoadedMetadata, userInfo:info)},
@@ -146,17 +144,7 @@ public class Container: UIBaseObject {
         ready = true
         trigger(ContainerEvent.Ready)
     }
-    
-    private func setDvrInUse(userInfo: EventUserInfo) {
-        settingsUpdated()
-        
-        if let playbackDvrInUse = userInfo!["dvr_in_use"] as? Bool {
-            dvrInUse = playbackDvrInUse
-        }
-        
-        forward(ContainerEvent.PlaybackDVRStateChanged, userInfo: userInfo)
-    }
-    
+
     private func trigger(event: ContainerEvent) {
         trigger(event.rawValue)
     }
