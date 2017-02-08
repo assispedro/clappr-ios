@@ -1,19 +1,13 @@
 import Foundation
 
-private struct Event {
+private struct EventHolder {
     var eventHandler: EventHandler
     var contextObject: BaseObject
     var name: String
-    
-    init(name: String, handler: EventHandler, contextObject: BaseObject) {
-        self.name = name
-        self.eventHandler = handler
-        self.contextObject = contextObject
-    }
 }
 
 public class BaseObject: NSObject, EventProtocol {
-    private var events = [String: Event]()
+    private var events = [String: EventHolder]()
     private var onceEventsHashes = [String]()
     
     public func on(eventName: String, callback: EventCallback) -> String {
@@ -23,8 +17,8 @@ public class BaseObject: NSObject, EventProtocol {
     private func on(eventName: String, callback: EventCallback, contextObject: BaseObject) -> String {
         let listenId = createListenId(eventName, contextObject: contextObject)
         let eventHandler = EventHandler(callback: wrapEventCallback(listenId, callback: callback))
-        
-        events[listenId] = Event(name: eventName, handler: eventHandler, contextObject: contextObject)
+
+        events[listenId] = EventHolder(eventHandler: eventHandler, contextObject: contextObject, name: eventName)
         notificationCenter().addObserver(eventHandler, selector: #selector(EventHandler.handleEvent), name: eventName, object: contextObject)
 
         return listenId
