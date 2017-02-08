@@ -129,7 +129,7 @@ class ContainerTests: QuickSpec {
                     
                     expect(bitRate) == expectedBitRate
                 }
-                
+
                 it("Should trigger container Error event when playback respective event happens with params") {
                     var error = ""
                     
@@ -158,12 +158,6 @@ class ContainerTests: QuickSpec {
                 it("Should trigger buffer full event after playback respective event is triggered") {
                     container.on(ContainerEvent.BufferFull.rawValue, callback: eventCallback)
                     playback.trigger(PlaybackEvent.BufferFull.rawValue)
-                    expect(eventWasTriggered) == true
-                }
-                
-                it("Should trigger settings event after playback respective event is triggered") {
-                    container.on(ContainerEvent.SettingsUpdated.rawValue, callback: eventCallback)
-                    playback.trigger(PlaybackEvent.SettingsUpdated.rawValue)
                     expect(eventWasTriggered) == true
                 }
                 
@@ -256,12 +250,6 @@ class ContainerTests: QuickSpec {
                     beforeEach() {
                         mockedPlayback = MockedSettingsPlayback(options: options)
                         container = Container(playback: mockedPlayback)
-                    }
-                    
-                    it("Should update it's settings after playback's settings update event") {
-                        mockedPlayback.trigger(PlaybackEvent.SettingsUpdated.rawValue)
-                        let fooSetting = container.settings["foo"] as? String
-                        expect(fooSetting) == "bar"
                     }
                     
                     it("Should call playback's stop method after calling respective method on container") {

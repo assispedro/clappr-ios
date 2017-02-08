@@ -2,7 +2,6 @@ import Foundation
 
 public class Container: UIBaseObject {
     public internal(set) var ready = false
-    public internal(set) var settings: [String : AnyObject] = [:]
     public internal(set) var plugins: [UIContainerPlugin] = []
     public internal(set) var options: Options
     
@@ -118,7 +117,6 @@ public class Container: UIBaseObject {
             .Pause                  : { [weak self] (info: EventUserInfo) in self?.trigger(.Pause)},
             .MediaControlDisabled   : { [weak self] (info: EventUserInfo) in self?.mediaControlEnabled = false },
             .MediaControlEnabled    : { [weak self] (info: EventUserInfo) in self?.mediaControlEnabled = true },
-            .SettingsUpdated        : { [weak self] (info: EventUserInfo) in self?.settingsUpdated()},
             .Ready                  : { [weak self] (info: EventUserInfo) in self?.setReady() },
             .Progress               : { [weak self] (info: EventUserInfo) in self?.forward(.Progress, userInfo:info)},
             .TimeUpdated            : { [weak self] (info: EventUserInfo) in self?.forward(.TimeUpdated, userInfo:info)},
@@ -134,12 +132,7 @@ public class Container: UIBaseObject {
         options[kStartAt] = 0
         trigger(.Play)
     }
-    
-    private func settingsUpdated() {
-        settings = playback.settings
-        self.trigger(ContainerEvent.SettingsUpdated)
-    }
-    
+
     private func setReady() {
         ready = true
         trigger(ContainerEvent.Ready)
